@@ -1,7 +1,7 @@
-package com.uavwaffle.enderbro;
+package com.uavwaffle.tameableendermen;
 
 import com.mojang.logging.LogUtils;
-import com.uavwaffle.enderbro.entity.ModEntities;
+import com.uavwaffle.tameableendermen.entity.ModEntities;
 import net.minecraft.client.renderer.entity.EndermanRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,15 +16,15 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(Enderbro.MODID)
-public class Enderbro {
+@Mod(TameableEndermen.MODID)
+public class TameableEndermen {
 
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "enderbro";
+    public static final String MODID = "tameableendermen";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public Enderbro() {
+    public TameableEndermen() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Register the commonSetup method for modloading
@@ -55,7 +55,7 @@ public class Enderbro {
 
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            EntityRenderers.register(ModEntities.ENDER_BRO.get(), EndermanRenderer::new);
+            EntityRenderers.register(ModEntities.TAMEABLE_ENDERMAN.get(), EndermanRenderer::new);
             // Some client setup code
 //            LOGGER.info("HELLO FROM CLIENT SETUP");
 //            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
