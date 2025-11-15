@@ -46,14 +46,16 @@ public class TameableEndermanEntity extends EnderMan {
     private static final EntityDataAccessor<Optional<UUID>> DATA_ID_OWNER_UUID = SynchedEntityData.defineId(TameableEndermanEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final int FLAG_TAME = 2;
 
-    private boolean orderedToSit;
+//    private boolean orderedToSit;
     private Vec3 lastInteractPos;
+    private FollowState followState;
 
     public TameableEndermanEntity(EntityType<? extends EnderMan> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
         this.setTamed(true);
         this.lastInteractPos = new Vec3(1,1,1);
+        followState = FollowState.SIT;
     }
 
     @Override
@@ -62,16 +64,7 @@ public class TameableEndermanEntity extends EnderMan {
         this.goalSelector.addGoal(2, new EnderSitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(6, new EnderFollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollWithinRadiusGoal(this, 1.0D, 0.0F));
-//        super.registerGoals();
-// OLD GOALS
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.0F));
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Endermite.class, true, false));
-        this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, false));
+        super.registerGoals();
 
     }
 
@@ -87,6 +80,30 @@ public class TameableEndermanEntity extends EnderMan {
             this.entityData.set(DATA_FLAGS_ID, (byte) (b0 & ~pFlagId));
         }
 
+    }
+
+    public FollowState getFollowState() {
+        return followState;
+    }
+
+    public void setFollowState(FollowState followState) {
+        this.followState = followState;
+    }
+
+    public void setFollowState(String followState) {
+        switch (followState) {
+            case "SIT":
+                this.followState = FollowState.SIT;
+                break;
+            case "FOLLOW":
+                this.followState = FollowState.FOLLOW;
+                break;
+            case "WANDER":
+                this.followState = FollowState.WANDER;
+                break;
+            default:
+                this.followState = FollowState.WANDER;
+        }
     }
 
     public boolean isTamed() {
@@ -170,10 +187,13 @@ public class TameableEndermanEntity extends EnderMan {
             if (this.isTamed()) {
                 InteractionResult interactionresult = super.mobInteract(pPlayer, pHand);
                 if ((!interactionresult.consumesAction() || this.isBaby()) && this.isOwnedBy(pPlayer)) {
-                    this.setOrderedToSit(!this.isOrderedToSit());
+//                    this.setOrderedToSit(!this.isOrderedToSit());
                     this.jumping = false;
                     this.navigation.stop();
                     this.setTarget((LivingEntity) null);
+
+                    this.followState = followState.switchFollowState();  // WORK WORK WORK WORK WORK CHECK FollowState.java for more info!!
+
                     this.lastInteractPos = new Vec3(getX(), getY(), getZ());
                     return InteractionResult.SUCCESS;
                 }
@@ -289,11 +309,15 @@ public class TameableEndermanEntity extends EnderMan {
     }
 
     public boolean isOrderedToSit() {
-        return this.orderedToSit;
+        return followState.name().equals("SIT");
     }
 
     public void setOrderedToSit(boolean pOrderedToSit) {
-        this.orderedToSit = pOrderedToSit;
+        if (pOrderedToSit) {
+            followState = FollowState.SIT;
+            return;
+        }
+        followState = FollowState.FOLLOW;
     }
 
 
@@ -320,7 +344,7 @@ public class TameableEndermanEntity extends EnderMan {
             compound.putUUID("Owner", this.getOwnerUUID());
         }
 
-        compound.putBoolean("Sitting", this.orderedToSit);
+        compound.putString("FollowState", this.followState.name());
         compound.put("LastInteractPos", super.newDoubleList(lastInteractPos.x(), lastInteractPos.y(), lastInteractPos.z()));
 
 //        if (!this.inventory.getItem(0).isEmpty()) {
@@ -347,12 +371,14 @@ public class TameableEndermanEntity extends EnderMan {
             this.setOwnerUUID(uuid);
         }
 
-        this.orderedToSit = compound.getBoolean("Sitting");
-        this.setInSittingPose(this.orderedToSit);
+//        this.orderedToSit = compound.getBoolean("Sitting");
+//        this.setInSittingPose(this.orderedToSit);
+        System.out.println("HIIII");
+        System.out.println(followState.name());
+        setFollowState(compound.getString("FollowState"));
+
 
         ListTag listTag = compound.getList("LastInteractPos", 6);
-        System.out.println("HI NOOB");
-        System.out.println(listTag.getDouble(0));
         lastInteractPos = new Vec3(listTag.getDouble(0),listTag.getDouble(1),listTag.getDouble(2));
     }
 

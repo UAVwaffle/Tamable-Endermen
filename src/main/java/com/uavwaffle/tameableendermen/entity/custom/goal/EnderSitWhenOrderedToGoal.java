@@ -18,7 +18,7 @@ public class EnderSitWhenOrderedToGoal extends Goal {
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     public boolean canContinueToUse() {
-        return this.mob.isOrderedToSit();
+        return this.mob.getFollowState().name().equals("SIT");
     }
 
     /**
@@ -27,6 +27,8 @@ public class EnderSitWhenOrderedToGoal extends Goal {
      */
     public boolean canUse() {
         if (!this.mob.isTamed()) {
+            return false;
+        } else if (!mob.getFollowState().name().equals("SIT")) {
             return false;
         } else if (this.mob.isInWaterOrBubble()) {
             return false;
@@ -37,7 +39,7 @@ public class EnderSitWhenOrderedToGoal extends Goal {
             if (livingentity == null) {
                 return true;
             } else {
-                return this.mob.distanceToSqr(livingentity) < 144.0D && livingentity.getLastHurtByMob() != null ? false : this.mob.isOrderedToSit();
+                return (!(this.mob.distanceToSqr(livingentity) < 144.0D) || livingentity.getLastHurtByMob() == null) && this.mob.isOrderedToSit();
             }
         }
     }

@@ -21,6 +21,9 @@ public class WaterAvoidingRandomStrollWithinRadiusGoal extends WaterAvoidingRand
         if (!tameableEndermanEntity.isTamed()) {
             return false;
         }
+        if (!tameableEndermanEntity.getFollowState().name().equals("WANDER")) {
+            return false;
+        }
         return super.canUse();
     }
 

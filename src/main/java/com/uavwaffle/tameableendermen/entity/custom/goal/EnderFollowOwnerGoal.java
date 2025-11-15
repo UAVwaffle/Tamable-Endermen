@@ -56,7 +56,7 @@ public boolean canUse() {
         return false;
     } else if (livingentity.isSpectator()) {
         return false;
-    } else if (this.tamable.isOrderedToSit()) {
+    } else if (!tamable.getFollowState().name().equals("FOLLOW")) {
         return false;
     } else if (this.tamable.distanceToSqr(livingentity) < (double)(this.startDistance * this.startDistance)) {
         return false;
