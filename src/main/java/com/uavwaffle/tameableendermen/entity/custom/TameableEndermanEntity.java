@@ -1,14 +1,14 @@
 package com.uavwaffle.tameableendermen.entity.custom;
 
-import com.uavwaffle.tameableendermen.TameableEndermen;
 import com.uavwaffle.tameableendermen.entity.custom.goal.EnderFollowOwnerGoal;
 import com.uavwaffle.tameableendermen.entity.custom.goal.EnderSitWhenOrderedToGoal;
 import com.uavwaffle.tameableendermen.entity.custom.goal.WaterAvoidingRandomStrollWithinRadiusGoal;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -20,18 +20,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
@@ -41,12 +35,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class TameableEndermanEntity extends EnderMan {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT, Items.SUGAR, Blocks.HAY_BLOCK.asItem(), Items.APPLE, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.CHORUS_FRUIT, Items.APPLE, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
     private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TameableEndermanEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<UUID>> DATA_ID_OWNER_UUID = SynchedEntityData.defineId(TameableEndermanEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final int FLAG_TAME = 2;
-
-//    private boolean orderedToSit;
+    
     private Vec3 lastInteractPos;
     private FollowState followState;
 
@@ -54,7 +47,7 @@ public class TameableEndermanEntity extends EnderMan {
         super(pEntityType, pLevel);
 
         this.setTamed(true);
-        this.lastInteractPos = new Vec3(1,1,1);
+        this.lastInteractPos = new Vec3(1, 1, 1);
         followState = FollowState.SIT;
     }
 
@@ -166,9 +159,6 @@ public class TameableEndermanEntity extends EnderMan {
     public boolean tame(Player pPlayer) {
         this.setOwnerUUID(pPlayer.getUUID());
         this.setTamed(true);
-//        if (pPlayer instanceof ServerPlayer) {
-//            CriteriaTriggers.TAME_ANIMAL.trigger((ServerPlayer)pPlayer, this);
-//        }
 
 
         this.level.broadcastEntityEvent(this, (byte) 7);
@@ -183,6 +173,7 @@ public class TameableEndermanEntity extends EnderMan {
     public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
 
+
         if (itemstack.isEmpty()) {
             if (this.isTamed()) {
                 InteractionResult interactionresult = super.mobInteract(pPlayer, pHand);
@@ -191,8 +182,9 @@ public class TameableEndermanEntity extends EnderMan {
                     this.jumping = false;
                     this.navigation.stop();
                     this.setTarget((LivingEntity) null);
+                    this.followState = followState.switchFollowState();
 
-                    this.followState = followState.switchFollowState();  // WORK WORK WORK WORK WORK CHECK FollowState.java for more info!!
+                    pPlayer.displayClientMessage(MutableComponent.create(new LiteralContents(followState.name())), true);
 
                     this.lastInteractPos = new Vec3(getX(), getY(), getZ());
                     return InteractionResult.SUCCESS;
@@ -211,7 +203,7 @@ public class TameableEndermanEntity extends EnderMan {
 //            }
 
 
-            if (itemstack.is(Items.BONE) && !this.isAngry() && !isTamed()) {
+            if (itemstack.is(Items.CHORUS_FLOWER) && !this.isAngry() && !isTamed()) {
                 if (!pPlayer.getAbilities().instabuild) {
                     itemstack.shrink(1);
                 }
@@ -251,42 +243,36 @@ public class TameableEndermanEntity extends EnderMan {
     }
 
     protected boolean handleEating(Player pPlayer, ItemStack pStack) {
-        boolean flag = false;
         float f = 0.0F;
-        if (pStack.is(Items.WHEAT)) {
-            f = 2.0F;
-        } else if (pStack.is(Items.SUGAR)) {
-            f = 1.0F;
-        } else if (pStack.is(Blocks.HAY_BLOCK.asItem())) {
-            f = 20.0F;
+        if (pStack.is(Items.CHORUS_FRUIT)) {
+            f = 4.0F;
         } else if (pStack.is(Items.APPLE)) {
             f = 3.0F;
-        } else if (pStack.is(Items.GOLDEN_CARROT)) {
-            f = 4.0F;
         } else if (pStack.is(Items.GOLDEN_APPLE) || pStack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
-            f = 10.0F;
+            f = 20.0F;
         }
 
         if (this.getHealth() < this.getMaxHealth() && f > 0.0F) {
             this.heal(f);
-            flag = true;
         }
 
-        if (flag) {
-            this.eating();
-            this.gameEvent(GameEvent.EAT);
-        }
+        this.eating();
+        this.gameEvent(GameEvent.EAT);
 
-        return flag;
+        return true;
     }
 
     private void eating() {
-        if (!this.isSilent()) {
-            SoundEvent soundevent = this.getEatingSound();
-            if (soundevent != null) {
-                this.level.playSound((Player) null, this.getX(), this.getY(), this.getZ(), soundevent, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
-            }
+        if (this.isSilent()) {
+            return;
         }
+
+
+        SoundEvent soundevent = this.getEatingSound();
+        if (soundevent == null) {
+            return;
+        }
+        this.level.playSound((Player) null, this.getX(), this.getY(), this.getZ(), soundevent, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
 
     }
 
@@ -323,7 +309,7 @@ public class TameableEndermanEntity extends EnderMan {
 
     @Nullable
     protected SoundEvent getEatingSound() {
-        return SoundEvents.HORSE_EAT;
+        return SoundEvents.ENDERMAN_AMBIENT;
     }
 
 
@@ -336,9 +322,6 @@ public class TameableEndermanEntity extends EnderMan {
 
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-//        compound.putBoolean("EatingHaystack", this.isEating());
-//        compound.putBoolean("Bred", this.isBred());
-//        compound.putInt("Temper", this.getTemper());
         compound.putBoolean("Tame", this.isTamed());
         if (this.getOwnerUUID() != null) {
             compound.putUUID("Owner", this.getOwnerUUID());
@@ -347,17 +330,11 @@ public class TameableEndermanEntity extends EnderMan {
         compound.putString("FollowState", this.followState.name());
         compound.put("LastInteractPos", super.newDoubleList(lastInteractPos.x(), lastInteractPos.y(), lastInteractPos.z()));
 
-//        if (!this.inventory.getItem(0).isEmpty()) {
-//            compound.put("SaddleItem", this.inventory.getItem(0).save(new CompoundTag()));
-//        }
 
     }
 
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-//        this.setEating(compound.getBoolean("EatingHaystack"));
-//        this.setBred(compound.getBoolean("Bred"));
-//        this.setTemper(compound.getInt("Temper"));
         this.setTamed(compound.getBoolean("Tame"));
         UUID uuid;
         if (compound.hasUUID("Owner")) {
@@ -371,15 +348,11 @@ public class TameableEndermanEntity extends EnderMan {
             this.setOwnerUUID(uuid);
         }
 
-//        this.orderedToSit = compound.getBoolean("Sitting");
-//        this.setInSittingPose(this.orderedToSit);
-        System.out.println("HIIII");
-        System.out.println(followState.name());
         setFollowState(compound.getString("FollowState"));
 
 
         ListTag listTag = compound.getList("LastInteractPos", 6);
-        lastInteractPos = new Vec3(listTag.getDouble(0),listTag.getDouble(1),listTag.getDouble(2));
+        lastInteractPos = new Vec3(listTag.getDouble(0), listTag.getDouble(1), listTag.getDouble(2));
     }
 
     protected void spawnTamingParticles(boolean pTamed) {
