@@ -39,7 +39,7 @@ public class TameableEndermanEntity extends EnderMan {
     private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TameableEndermanEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<UUID>> DATA_ID_OWNER_UUID = SynchedEntityData.defineId(TameableEndermanEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final int FLAG_TAME = 2;
-    
+
     private Vec3 lastInteractPos;
     private FollowState followState;
 
@@ -312,6 +312,13 @@ public class TameableEndermanEntity extends EnderMan {
         return SoundEvents.ENDERMAN_AMBIENT;
     }
 
+    @Override
+    public void checkDespawn() {
+        if (isTamed()) {
+            return;
+        }
+        super.checkDespawn();
+    }
 
     protected void defineSynchedData() {
         super.defineSynchedData();
