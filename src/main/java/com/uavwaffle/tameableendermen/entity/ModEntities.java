@@ -16,7 +16,7 @@ public class ModEntities {
     public static final RegistryObject<EntityType<TameableEndermanEntity>> TAMEABLE_ENDERMAN =
             ENTITY_TYPES.register("tameable_enderman",
                     () -> EntityType.Builder.of(TameableEndermanEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 5.9F).build("tameable_enderman"));
+                            .sized(0.6F, 2.9F).build("tameable_enderman"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
