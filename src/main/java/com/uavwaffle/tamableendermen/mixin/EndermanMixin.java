@@ -37,6 +37,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -54,17 +55,8 @@ public abstract class EndermanMixin extends Monster implements NeutralMob, Tamab
     private Vec3 lastInteractPos = new Vec3(1, 1, 1);
     private FollowState followState = FollowState.SIT;
 
-//    private EnderMan self;
-
     public EndermanMixin(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-//
-//        this.setTamed(false);
-//        System.out.println("HIIIII");
-//        System.out.println(isTamed());
-////        this.lastInteractPos = new Vec3(1, 1, 1);
-////        followState = FollowState.SIT;
-////        this.self = (EnderMan) (Object) this;
     }
 
     @Inject(at = @At("TAIL"), method = "<init>")
@@ -72,21 +64,8 @@ public abstract class EndermanMixin extends Monster implements NeutralMob, Tamab
         this.setTamed(false);
     }
 
-//    @Inject(method = "<init>", @At("TAIL"))
-
-
-//    public <Init()V>(EntityType<? extends EnderMan> pEntityType, Level pLevel) {
-//        this.setTamed(false);
-//    }
-
     @Inject(at = @At("HEAD"), method = "registerGoals")
     protected void registerGoals(CallbackInfo ci) {
-
-
-//        System.out.println("HIIII");
-//        System.out.println(this);
-//        System.out.println(self);
-//        System.out.println(self.getDisplayName());
 
         this.goalSelector.addGoal(2, new EnderSitWhenOrderedToGoal(this, (EnderMan) (Object) this));
         this.goalSelector.addGoal(6, new EnderFollowOwnerGoal(this, (EnderMan) (Object) this, 1.0D, 10.0F, 2.0F, false));
@@ -131,6 +110,11 @@ public abstract class EndermanMixin extends Monster implements NeutralMob, Tamab
             default:
                 this.followState = FollowState.WANDER;
         }
+    }
+
+    @Inject(at = @At("HEAD"), method = "teleport()Z")
+    protected void teleport(CallbackInfoReturnable<Boolean> cir) {
+        this.followState = FollowState.WANDER;
     }
 
     public boolean isTamed() {
