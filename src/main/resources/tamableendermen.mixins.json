@@ -1,9 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.uavwaffle.tameableendermen.mixin",
+  "package": "com.uavwaffle.tamableendermen.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "tameableendermen.refmap.json",
+  "refmap": "tamableendermen.refmap.json",
   "mixins": [
     "EndermanMixin"
   ],

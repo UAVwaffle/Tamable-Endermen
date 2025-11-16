@@ -1,9 +1,9 @@
-package com.uavwaffle.tameableendermen.entity.custom;
+package com.uavwaffle.tamableendermen.entity.custom;
 
 public enum FollowState {
     SIT, FOLLOW, WANDER;
 
-    FollowState switchFollowState() {
+    public FollowState switchFollowState() {
         return switch (this) {
             case SIT -> FOLLOW;
             case FOLLOW -> WANDER;

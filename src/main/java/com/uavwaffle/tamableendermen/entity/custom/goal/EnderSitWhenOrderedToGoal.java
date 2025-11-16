@@ -1,24 +1,27 @@
-package com.uavwaffle.tameableendermen.entity.custom.goal;
+package com.uavwaffle.tamableendermen.entity.custom.goal;
 
-import com.uavwaffle.tameableendermen.entity.custom.TameableEndermanEntity;
+import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.EnderMan;
 
 import java.util.EnumSet;
 
-public class EnderSitWhenOrderedToGoal extends Goal {
-    private final TameableEndermanEntity mob;
+public class EnderSitWhenOrderedToGoal extends Goal implements TamableEnderManInterface {
+    private final EnderMan mob;
+    private final TamableEnderManInterface tameableEnderMan;
 
-    public EnderSitWhenOrderedToGoal(TameableEndermanEntity pMob) {
+    public EnderSitWhenOrderedToGoal(TamableEnderManInterface tameableEnderMan, EnderMan pMob) {
         this.mob = pMob;
         this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
+        this.tameableEnderMan = tameableEnderMan;
     }
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     public boolean canContinueToUse() {
-        return this.mob.getFollowState().name().equals("SIT");
+        return this.tameableEnderMan.getFollowState().name().equals("SIT");
     }
 
     /**
@@ -26,20 +29,20 @@ public class EnderSitWhenOrderedToGoal extends Goal {
      * method as well.
      */
     public boolean canUse() {
-        if (!this.mob.isTamed()) {
+        if (!this.tameableEnderMan.isTamed()) {
             return false;
-        } else if (!mob.getFollowState().name().equals("SIT")) {
+        } else if (!tameableEnderMan.getFollowState().name().equals("SIT")) {
             return false;
         } else if (this.mob.isInWaterOrBubble()) {
             return false;
         } else if (!this.mob.isOnGround()) {
             return false;
         } else {
-            LivingEntity livingentity = this.mob.getOwner();
+            LivingEntity livingentity = this.tameableEnderMan.getOwner();
             if (livingentity == null) {
                 return true;
             } else {
-                return (!(this.mob.distanceToSqr(livingentity) < 144.0D) || livingentity.getLastHurtByMob() == null) && this.mob.isOrderedToSit();
+                return (!(this.mob.distanceToSqr(livingentity) < 144.0D) || livingentity.getLastHurtByMob() == null) && this.tameableEnderMan.tameableendermen$isOrderedToSit();
             }
         }
     }
@@ -49,13 +52,13 @@ public class EnderSitWhenOrderedToGoal extends Goal {
      */
     public void start() {
         this.mob.getNavigation().stop();
-        this.mob.setInSittingPose(true);
+//        this.tameableEnderMan.setInSittingPose(true);
     }
 
     /**
      * Reset the task's internal state. Called when this task is interrupted by another one
      */
     public void stop() {
-        this.mob.setInSittingPose(false);
+        this.tameableEnderMan.setInSittingPose(false);
     }
 }

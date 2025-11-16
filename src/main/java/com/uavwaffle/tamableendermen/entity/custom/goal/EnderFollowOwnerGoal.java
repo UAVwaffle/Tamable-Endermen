@@ -1,13 +1,13 @@
-package com.uavwaffle.tameableendermen.entity.custom.goal;
+package com.uavwaffle.tamableendermen.entity.custom.goal;
 
-import com.uavwaffle.tameableendermen.entity.custom.TameableEndermanEntity;
+import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +21,8 @@ public class EnderFollowOwnerGoal extends Goal {
     private static final int MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2;
     private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
     private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
-    private final TameableEndermanEntity tamable;
+    private final EnderMan tamable;
+    private final TamableEnderManInterface tameableEnderMan;
     private LivingEntity owner;
     private final LevelReader level;
     private final double speedModifier;
@@ -32,8 +33,9 @@ public class EnderFollowOwnerGoal extends Goal {
     private float oldWaterCost;
     private final boolean canFly;
 
-    public EnderFollowOwnerGoal (TameableEndermanEntity pTamable, double pSpeedModifier, float pStartDistance, float pStopDistance, boolean pCanFly) {
+    public EnderFollowOwnerGoal (TamableEnderManInterface tameableEnderMan, EnderMan pTamable, double pSpeedModifier, float pStartDistance, float pStopDistance, boolean pCanFly) {
       this.tamable = pTamable;
+      this.tameableEnderMan = tameableEnderMan;
       this.level = pTamable.level;
       this.speedModifier = pSpeedModifier;
       this.navigation = pTamable.getNavigation();
@@ -51,12 +53,13 @@ public class EnderFollowOwnerGoal extends Goal {
  * method as well.
  */
 public boolean canUse() {
-    LivingEntity livingentity = this.tamable.getOwner();
+
+    LivingEntity livingentity = this.tameableEnderMan.getOwner();
     if (livingentity == null) {
         return false;
     } else if (livingentity.isSpectator()) {
         return false;
-    } else if (!tamable.getFollowState().name().equals("FOLLOW")) {
+    } else if (!tameableEnderMan.getFollowState().name().equals("FOLLOW")) {
         return false;
     } else if (this.tamable.distanceToSqr(livingentity) < (double)(this.startDistance * this.startDistance)) {
         return false;
@@ -72,7 +75,7 @@ public boolean canUse() {
 public boolean canContinueToUse() {
     if (this.navigation.isDone()) {
         return false;
-    } else if (this.tamable.isOrderedToSit()) {
+    } else if (this.tameableEnderMan.tameableendermen$isOrderedToSit()) {
         return false;
     } else {
         return !(this.tamable.distanceToSqr(this.owner) <= (double)(this.stopDistance * this.stopDistance));
