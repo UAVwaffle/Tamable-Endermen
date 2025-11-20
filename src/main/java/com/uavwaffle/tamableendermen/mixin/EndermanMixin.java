@@ -237,7 +237,7 @@ public abstract class EndermanMixin extends Monster implements NeutralMob, Tamab
                     this.setTarget((LivingEntity) null);
                     this.followState = followState.switchFollowState();
 
-                    pPlayer.displayClientMessage(MutableComponent.create(new LiteralContents(followState.name())), true);
+                    pPlayer.displayClientMessage(MutableComponent.create(new LiteralContents(followState.getFollowStateText())), true);
 
                     this.lastInteractPos = new Vec3(getX(), getY(), getZ());
                     return InteractionResult.SUCCESS;
