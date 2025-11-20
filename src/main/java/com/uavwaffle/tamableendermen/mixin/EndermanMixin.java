@@ -5,6 +5,7 @@ import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
 import com.uavwaffle.tamableendermen.entity.custom.goal.EnderFollowOwnerGoal;
 import com.uavwaffle.tamableendermen.entity.custom.goal.EnderSitWhenOrderedToGoal;
 import com.uavwaffle.tamableendermen.entity.custom.goal.WaterAvoidingRandomStrollWithinRadiusGoal;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +20,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,6 +36,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -46,7 +49,7 @@ import java.util.UUID;
 @Mixin(EnderMan.class)
 public abstract class EndermanMixin extends Monster implements NeutralMob, TamableEnderManInterface {
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.CHORUS_FRUIT, Items.APPLE, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.CHORUS_FRUIT, Items.APPLE);
     private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(EnderMan.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<UUID>> DATA_ID_OWNER_UUID = SynchedEntityData.defineId(EnderMan.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final int FLAG_TAME = 2;
@@ -116,6 +119,40 @@ public abstract class EndermanMixin extends Monster implements NeutralMob, Tamab
     protected void teleport(CallbackInfoReturnable<Boolean> cir) {
         this.followState = FollowState.WANDER;
     }
+
+    @Inject(at = @At("HEAD"), method = "isLookingAtMe", cancellable = true)
+    void isLookingAtMe(Player pPlayer, CallbackInfoReturnable<Boolean> cir) {
+        if (isTamed()) {
+            cir.setReturnValue(false);
+        }
+
+    }
+
+    @Inject(at = @At("HEAD"), method = "customServerAiStep", cancellable = true)
+    protected void customServerAiStep(CallbackInfo ci) {
+        if (isTamed()) {
+            super.customServerAiStep();
+            ci.cancel();
+        }
+    }
+
+    @Inject(at = {@At("HEAD"), @At("RETURN")}, method = "hurt", cancellable = true)
+    public void hurt(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> cir) {
+        if (isTamed()) {
+            stopBeingAngry();
+        }
+
+        if (isTamed() && pSource.getMsgId().equals("drown") && isInRain() && !isInWaterOrBubble()) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Unique
+    private boolean isInRain() {
+        BlockPos blockpos = blockPosition();
+        return this.level.isRainingAt(blockpos) || level.isRainingAt(new BlockPos((double) blockpos.getX(), getBoundingBox().maxY, (double) blockpos.getZ()));
+    }
+
 
     public boolean isTamed() {
         return this.getFlag(2);
@@ -214,8 +251,13 @@ public abstract class EndermanMixin extends Monster implements NeutralMob, Tamab
                 return this.fedFood(pPlayer, itemstack);
             }
 
+            if (itemstack.is(Items.FEATHER) && isTamed()) {
+                this.setSilent(!isSilent());
+                pPlayer.displayClientMessage(MutableComponent.create(new LiteralContents("Silenced: " + isSilent())), true);
+            }
 
-            if (itemstack.is(Items.CHORUS_FLOWER) && !this.isAngry() && !isTamed()) {
+
+            if (itemstack.is(Items.POPPED_CHORUS_FRUIT) && !this.isAngry() && !isTamed()) {
                 if (!pPlayer.getAbilities().instabuild) {
                     itemstack.shrink(1);
                 }
@@ -257,11 +299,9 @@ public abstract class EndermanMixin extends Monster implements NeutralMob, Tamab
     public boolean handleEating(Player pPlayer, ItemStack pStack) {
         float f = 0.0F;
         if (pStack.is(Items.CHORUS_FRUIT)) {
-            f = 4.0F;
+            f = 10.0F;
         } else if (pStack.is(Items.APPLE)) {
-            f = 3.0F;
-        } else if (pStack.is(Items.GOLDEN_APPLE) || pStack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
-            f = 20.0F;
+            f = 5.0F;
         }
 
         if (this.getHealth() < this.getMaxHealth() && f > 0.0F) {

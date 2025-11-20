@@ -2,12 +2,14 @@ package com.uavwaffle.tamableendermen.entity.custom.goal;
 
 import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -127,6 +129,10 @@ private void teleportToOwner() {
         int l = this.randomIntInclusive(-3, 3);
         boolean flag = this.maybeTeleportTo(blockpos.getX() + j, blockpos.getY() + k, blockpos.getZ() + l);
         if (flag) {
+            if (!tamable.isSilent()) {
+                tamable.level.playSound((Player)null, tamable.xo, tamable.yo, tamable.zo, SoundEvents.ENDERMAN_TELEPORT, tamable.getSoundSource(), 1.0F, 1.0F);
+                tamable.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
             return;
         }
     }
