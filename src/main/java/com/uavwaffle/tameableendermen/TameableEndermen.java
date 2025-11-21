@@ -1,18 +1,18 @@
-package com.uavwaffle.tamableendermen;
+package com.uavwaffle.tameableendermen;
 
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
-@Mod(TamableEndermen.MODID)
-public class TamableEndermen {
+@Mod(TameableEndermen.MODID)
+public class TameableEndermen {
 
-    public static final String MODID = "tamableendermen";
+    public static final String MODID = "tameableendermen";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public TamableEndermen() {
+    public TameableEndermen() {
         MinecraftForge.EVENT_BUS.register(this);
     }
 

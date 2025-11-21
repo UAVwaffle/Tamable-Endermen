@@ -1,4 +1,4 @@
-package com.uavwaffle.tamableendermen.entity.custom;
+package com.uavwaffle.tameableendermen.entity.custom;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,9 +18,8 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface TamableEnderManInterface {
+public interface TameableEnderManInterface {
     public static final Ingredient FOOD_ITEMS = null;
-//    public static final EntityDataAccessor<Byte> DATA_FLAGS_ID = null;
     public static final EntityDataAccessor<Optional<UUID>> DATA_ID_OWNER_UUID = null;
     public static final int FLAG_TAME = 2;
 
@@ -107,9 +106,6 @@ public interface TamableEnderManInterface {
     default void eating() {
     }
 
-//    public default int getMaxHeadXRot() {
-//        return 0;
-//    }
 
     public default boolean isInSittingPose() {
         return false;
@@ -124,7 +120,6 @@ public interface TamableEnderManInterface {
 
     public default void tameableendermen$setOrderedToSit(boolean pOrderedToSit) {
     }
-
 
     @Nullable
     default SoundEvent getEatingSound() {

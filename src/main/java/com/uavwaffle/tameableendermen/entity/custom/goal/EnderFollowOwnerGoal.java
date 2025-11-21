@@ -1,6 +1,6 @@
-package com.uavwaffle.tamableendermen.entity.custom.goal;
+package com.uavwaffle.tameableendermen.entity.custom.goal;
 
-import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
+import com.uavwaffle.tameableendermen.entity.custom.TameableEnderManInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,7 +24,7 @@ public class EnderFollowOwnerGoal extends Goal {
     private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
     private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
     private final EnderMan tamable;
-    private final TamableEnderManInterface tameableEnderMan;
+    private final TameableEnderManInterface tameableEnderMan;
     private LivingEntity owner;
     private final LevelReader level;
     private final double speedModifier;
@@ -35,7 +35,7 @@ public class EnderFollowOwnerGoal extends Goal {
     private float oldWaterCost;
     private final boolean canFly;
 
-    public EnderFollowOwnerGoal (TamableEnderManInterface tameableEnderMan, EnderMan pTamable, double pSpeedModifier, float pStartDistance, float pStopDistance, boolean pCanFly) {
+    public EnderFollowOwnerGoal (TameableEnderManInterface tameableEnderMan, EnderMan pTamable, double pSpeedModifier, float pStartDistance, float pStopDistance, boolean pCanFly) {
       this.tamable = pTamable;
       this.tameableEnderMan = tameableEnderMan;
       this.level = pTamable.level;

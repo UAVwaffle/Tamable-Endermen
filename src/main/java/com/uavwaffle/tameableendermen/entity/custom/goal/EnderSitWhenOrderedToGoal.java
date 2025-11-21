@@ -1,17 +1,17 @@
-package com.uavwaffle.tamableendermen.entity.custom.goal;
+package com.uavwaffle.tameableendermen.entity.custom.goal;
 
-import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
+import com.uavwaffle.tameableendermen.entity.custom.TameableEnderManInterface;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.EnderMan;
 
 import java.util.EnumSet;
 
-public class EnderSitWhenOrderedToGoal extends Goal implements TamableEnderManInterface {
+public class EnderSitWhenOrderedToGoal extends Goal implements TameableEnderManInterface {
     private final EnderMan mob;
-    private final TamableEnderManInterface tameableEnderMan;
+    private final TameableEnderManInterface tameableEnderMan;
 
-    public EnderSitWhenOrderedToGoal(TamableEnderManInterface tameableEnderMan, EnderMan pMob) {
+    public EnderSitWhenOrderedToGoal(TameableEnderManInterface tameableEnderMan, EnderMan pMob) {
         this.mob = pMob;
         this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
         this.tameableEnderMan = tameableEnderMan;

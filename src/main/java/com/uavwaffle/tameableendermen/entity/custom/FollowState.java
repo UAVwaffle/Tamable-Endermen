@@ -1,4 +1,4 @@
-package com.uavwaffle.tamableendermen.entity.custom;
+package com.uavwaffle.tameableendermen.entity.custom;
 
 public enum FollowState {
     SIT, FOLLOW, WANDER;

@@ -1,10 +1,10 @@
-package com.uavwaffle.tamableendermen.mixin;
+package com.uavwaffle.tameableendermen.mixin;
 
-import com.uavwaffle.tamableendermen.entity.custom.FollowState;
-import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
-import com.uavwaffle.tamableendermen.entity.custom.goal.EnderFollowOwnerGoal;
-import com.uavwaffle.tamableendermen.entity.custom.goal.EnderSitWhenOrderedToGoal;
-import com.uavwaffle.tamableendermen.entity.custom.goal.WaterAvoidingRandomStrollWithinRadiusGoal;
+import com.uavwaffle.tameableendermen.entity.custom.FollowState;
+import com.uavwaffle.tameableendermen.entity.custom.TameableEnderManInterface;
+import com.uavwaffle.tameableendermen.entity.custom.goal.EnderFollowOwnerGoal;
+import com.uavwaffle.tameableendermen.entity.custom.goal.EnderSitWhenOrderedToGoal;
+import com.uavwaffle.tameableendermen.entity.custom.goal.WaterAvoidingRandomStrollWithinRadiusGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -47,7 +47,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(EnderMan.class)
-public abstract class EndermanMixin extends Monster implements NeutralMob, TamableEnderManInterface {
+public abstract class EndermanMixin extends Monster implements NeutralMob, TameableEnderManInterface {
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.CHORUS_FRUIT, Items.APPLE);
     private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(EnderMan.class, EntityDataSerializers.BYTE);

@@ -1,16 +1,23 @@
-The TameableEnderman Mod makes Endermen Tamable!
+The TameableEnderman Mod makes Endermen Tameable!
 
-Tame Endermen by giving them a chorus flower (right-click).
-You can feed Endermen chorus fruit, apples, golden apples, and enchanted golden apples.
+Tame Endermen by giving them Popped Chorus Fruit (right-click). You can feed and heal Endermen with chorus fruit and apples. Apples heal by 5hp and Chorus fruit by 10hp.
 
-Right-click tamed Endermen with an empty hand to toggle between sit*, follow, and wander**.
-*sit is really just stand still.
-**wander stays within a 16 block radius where they were last right-clicked.
+Right-clicking a tamed Enderman with an empty hand will switch between standing, follow, and wander.
 
-Tamed Endermen will put themselves in wander mode and attempt to walk back to where they were last right-clicked when they teleport (example: they touch water, it's raining, the sun is shining on them, they take damage, etc...).
+They will not wander outside a 16 block radius
+
+Tamed Endermen will put themselves in wander mode and attempt to walk back to where they were last right-clicked whenever they teleport (example: they touch water, sometimes when they take damage, etc...).
 
 Tamed Endermen do NOT de-spawn AND will not disappear on peaceful (no name tag needed, but still recommend for identification). (and, yes, normal endermen do still despawn)
 
-Tamed Endermen are peaceful to their "friend", miner who gave them a chorus flower, kind of like wolves, but do not defend their friend/owner unlike wolves.
+Tamed Endermen will not take damage from rain and will not hide from the sun.
 
-idk if it works with mods that add pet bed or pet respawn mechanics, TEST ON CREATIVE BEFORE RISKING YOUR ENDERFRIEND'S LIFE!!!!
+Tamed Endermen are peaceful so you don't have to worry about accidently hitting them or looking at them in the eye.
+
+Note: They will not defend you, even if you are being attacked
+
+Right-Clicking a tamed Enderman with a feather will toggle silenced on or off (they can be quite loud at times)
+
+Do note that, like wolves, only the "owner" can toggle between standing, following, and wandering. No kidnapping Endermen
+
+I do NOT know if it works with mods that add pet beds or pet respawn mechanics, TEST ON CREATIVE BEFORE RISKING YOUR ENDERFRIEND'S LIFE!!!!

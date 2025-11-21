@@ -1,6 +1,6 @@
-package com.uavwaffle.tamableendermen.entity.custom.goal;
+package com.uavwaffle.tameableendermen.entity.custom.goal;
 
-import com.uavwaffle.tamableendermen.entity.custom.TamableEnderManInterface;
+import com.uavwaffle.tameableendermen.entity.custom.TameableEnderManInterface;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -10,9 +10,9 @@ import javax.annotation.Nullable;
 
 public class WaterAvoidingRandomStrollWithinRadiusGoal extends WaterAvoidingRandomStrollGoal {
     EnderMan tameableEndermanEntity;
-    private final TamableEnderManInterface tameableEnderMan;
+    private final TameableEnderManInterface tameableEnderMan;
 
-    public WaterAvoidingRandomStrollWithinRadiusGoal(TamableEnderManInterface tameableEnderMan, EnderMan pMob, double pSpeedModifier, float pProbability) {
+    public WaterAvoidingRandomStrollWithinRadiusGoal(TameableEnderManInterface tameableEnderMan, EnderMan pMob, double pSpeedModifier, float pProbability) {
         super(pMob, pSpeedModifier, pProbability);
         tameableEndermanEntity = pMob;
         this.tameableEnderMan = tameableEnderMan;
