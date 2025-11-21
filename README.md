@@ -32,7 +32,7 @@ Right-clicking a tamed Enderman with a feather will toggle silenced on or off (t
 
 _More notes! Like wolves, only the "owner" can toggle between standing, following, and wandering. No kidnapping Endermen!!_
 
-
+Release Here [Modrinth](https://modrinth.com/mod/tameable-endermen)
 
 Report bugs on the [GitHub](https://github.com/UAVwaffle/Tamable-Endermen/issues)
 
